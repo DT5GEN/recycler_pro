@@ -13,8 +13,31 @@ class MainActivity : AppCompatActivity() {
 
         val list: RecyclerView = findViewById(R.id.list)
 
-        list.adapter = ListAdapter {
+        list.adapter = ListAdapter ({
             Snackbar.make(list, it, Snackbar.LENGTH_SHORT).show()
+        },
+            {
+                Snackbar.make(list, it.img.toString(), Snackbar.LENGTH_SHORT).show()
+            }).apply {
+           setData(
+               listOf(
+                   NumberItem("1"),
+                   NumberItem("2"),
+                   NumberItem("3"),
+                   NumberItem("4"),
+                   ImageItem(R.drawable.smile),
+                   NumberItem("5"),
+                   ImageItem(R.drawable.smile),
+                   NumberItem("6"),
+                   ImageItem(R.drawable.smile),
+                   NumberItem("7"),
+                   ImageItem(R.drawable.smile),
+                   NumberItem("8"),
+                   ImageItem(R.drawable.smile),
+                   NumberItem("9"),
+                   ImageItem(R.drawable.smile)
+               )
+           )
         }
 
 
