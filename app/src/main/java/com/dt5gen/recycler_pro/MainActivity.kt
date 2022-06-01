@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         val list: RecyclerView = findViewById(R.id.list)
 
         list.adapter = ListAdapter {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            Snackbar.make(list, it, Snackbar.LENGTH_SHORT).show()
         }
 
 
