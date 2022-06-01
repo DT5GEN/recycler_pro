@@ -21,16 +21,21 @@ class MainActivity : AppCompatActivity() {
             }).apply {
            setData(
                listOf(
+                   HeaderItem("Some"),
                    NumberItem("1"),
+                   HeaderItem("Some"),
                    NumberItem("2"),
+                   HeaderItem("Some Again"),
                    NumberItem("3"),
                    NumberItem("4"),
                    ImageItem(R.drawable.smile),
+                   HeaderItem("Some Again"),
                    NumberItem("5"),
                    ImageItem(R.drawable.smile),
                    NumberItem("6"),
                    ImageItem(R.drawable.smile),
                    NumberItem("7"),
+                   HeaderItem("Some Again"),
                    ImageItem(R.drawable.smile),
                    NumberItem("8"),
                    ImageItem(R.drawable.smile),

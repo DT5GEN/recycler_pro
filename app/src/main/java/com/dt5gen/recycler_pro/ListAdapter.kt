@@ -18,6 +18,7 @@ class ListAdapter(
 
         private const val TYPE_NUMBER = 1
         private const val TYPE_IMAGE = 2
+        private const val TYPE_HEADER = 3
 
     }
 
@@ -33,6 +34,7 @@ class ListAdapter(
     override fun getItemViewType(position: Int): Int = when (data[position]) {
         is NumberItem -> TYPE_NUMBER
         is ImageItem -> TYPE_IMAGE
+        is HeaderItem -> TYPE_HEADER
     }
 
 
@@ -44,6 +46,10 @@ class ListAdapter(
 
             TYPE_IMAGE -> ImageViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
+            )
+
+            TYPE_HEADER -> HeaderViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_header, parent, false)
             )
 
             else -> throw IllegalStateException("Всё пропало")
@@ -60,6 +66,10 @@ class ListAdapter(
             is ImageViewHolder -> {
                 val item = data[position] as ImageItem
                 holder.imageItem.setImageResource(item.img)
+            }
+            is HeaderViewHolder -> {
+                val item = data[position] as HeaderItem
+                holder.header.text = item.headerItem
             }
         }
 
@@ -79,6 +89,12 @@ class ListAdapter(
                 }
             }
         }
+    }
+
+    inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var header: TextView = itemView.findViewById(R.id.header_title)
+
+
     }
 
 
