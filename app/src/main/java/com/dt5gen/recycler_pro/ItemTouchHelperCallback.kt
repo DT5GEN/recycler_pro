@@ -1,5 +1,7 @@
 package com.dt5gen.recycler_pro
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
@@ -41,4 +43,20 @@ class ItemTouchHelperCallback (
     val position = viewHolder.adapterPosition
         onItemSwiped(position)
     }
+
+
+    @SuppressLint("ResourceAsColor")
+    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        super.onSelectedChanged(viewHolder, actionState)
+        viewHolder?.itemView?.setBackgroundColor(R.color.touch)
+    }
+
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
+        viewHolder.itemView.background = null
+
+    }
+
+
 }
