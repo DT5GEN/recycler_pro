@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 class ListAdapter(
     private val numberItemClicked: ((item: String) -> Unit)? = null,
@@ -87,6 +88,32 @@ class ListAdapter(
                 (data[adapterPosition] as? NumberItem)?.let {
                     numberItemClicked?.invoke(it.textNumberItem)
                 }
+            }
+
+            itemView.findViewById<ImageView>(R.id.delete).setOnClickListener {
+                data.removeAt(adapterPosition)
+            //  notifyDataSetChanged() // удаление без красоты (анимации )
+              notifyItemRemoved(adapterPosition)
+            }
+
+            itemView.findViewById<ImageView>(R.id.addItem).setOnClickListener {
+                data.add(adapterPosition+1, NumberItem(UUID.randomUUID().toString()))
+                         notifyItemInserted(adapterPosition+1)
+            }
+
+            itemView.findViewById<ImageView>(R.id.update).setOnClickListener {
+                data [adapterPosition] = NumberItem(UUID.randomUUID().toString())
+                       notifyItemChanged(adapterPosition)
+            }
+
+            itemView.findViewById<ImageView>(R.id.up).setOnClickListener {
+                Collections.swap(data, adapterPosition, adapterPosition -1 )
+                       notifyItemMoved(adapterPosition, adapterPosition -1 )
+            }
+
+            itemView.findViewById<ImageView>(R.id.down).setOnClickListener {
+                Collections.swap(data, adapterPosition, adapterPosition +1 )
+                       notifyItemMoved(adapterPosition, adapterPosition +1 )
             }
         }
     }
