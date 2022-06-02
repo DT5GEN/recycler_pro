@@ -8,18 +8,47 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var adapter: ListAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val list: RecyclerView = findViewById(R.id.list)
 
-        val adapter = ListAdapter({
+        val helper = ItemTouchHelper(ItemTouchHelperCallback(
+
+            {
+                adapter.itemRemoved(it)
+                adapter.notifyItemRemoved(it)
+            }, {
+
+                    from, to ->
+                with(adapter) {
+                    itemsMoved(from, to)
+                    notifyItemMoved(from, to)
+                    notifyItemChanged(from)
+                    notifyItemChanged(to)
+
+                }
+
+            }
+
+        ))
+
+
+        adapter = ListAdapter({
             Snackbar.make(list, it, Snackbar.LENGTH_SHORT).show()
         },
             {
                 Snackbar.make(list, it.img.toString(), Snackbar.LENGTH_SHORT).show()
-            }).apply {
+            },
+            {
+                helper.startDrag(it)
+            }
+
+        ).apply {
             setData(
                 listOf(
                     HeaderItem("Some"),
@@ -49,26 +78,10 @@ class MainActivity : AppCompatActivity() {
 
         list.adapter = adapter
 
-        ItemTouchHelper(ItemTouchHelperCallback(
 
-            {
-                adapter.itemRemoved(it)
-                adapter.notifyItemRemoved(it)
-            }, {
+        helper.attachToRecyclerView(list)
 
-                    from, to ->
-                with(adapter) {
-                    itemsMoved(from, to)
-                    notifyItemMoved(from, to)
-                    notifyItemChanged(from)
-                    notifyItemChanged(to)
-
-                }
-
-            }
-
-        ))
-            .attachToRecyclerView(list)
+        list.addItemDecoration(ListItemDecorator())
 
 
     }

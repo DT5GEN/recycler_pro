@@ -1,6 +1,7 @@
 package com.dt5gen.recycler_pro
 
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,7 +11,8 @@ import java.util.*
 
 class ListAdapter(
     private val numberItemClicked: ((item: String) -> Unit)? = null,
-    private val imageLongClicked: ((item: ImageItem) -> Unit)? = null
+    private val imageLongClicked: ((item: ImageItem) -> Unit)? = null,
+    private val itemDragged: ((viewHolder: RecyclerView.ViewHolder) -> Unit)? = null
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -115,6 +117,18 @@ class ListAdapter(
                 //  notifyDataSetChanged() // удаление без красоты (анимации )
                 notifyItemRemoved(adapterPosition)
             }
+
+
+
+            itemView.findViewById<ImageView>(R.id.drag).setOnTouchListener { view, motionEvent ->
+                if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                    itemDragged?.invoke(this)
+                }
+                false
+            }
+
+
+
 
             itemView.findViewById<ImageView>(R.id.addItem).setOnClickListener {
                 data.add(adapterPosition + 1, NumberItem(UUID.randomUUID().toString()))

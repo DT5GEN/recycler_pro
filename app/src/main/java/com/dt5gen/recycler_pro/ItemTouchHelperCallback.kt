@@ -1,14 +1,20 @@
 package com.dt5gen.recycler_pro
 
 import android.annotation.SuppressLint
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemTouchHelperCallback (
-    val onItemSwiped : (position: Int) -> Unit,
-    val onItemMoved : (from: Int, to: Int) -> Unit
-): ItemTouchHelper.Callback(){
+class ItemTouchHelperCallback(
+    val onItemSwiped: (position: Int) -> Unit,
+    val onItemMoved: (from: Int, to: Int) -> Unit
+) : ItemTouchHelper.Callback() {
+
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.MAGENTA
+    }
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
@@ -40,7 +46,7 @@ class ItemTouchHelperCallback (
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-    val position = viewHolder.adapterPosition
+        val position = viewHolder.adapterPosition
         onItemSwiped(position)
     }
 
@@ -55,6 +61,20 @@ class ItemTouchHelperCallback (
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         viewHolder.itemView.background = null
+
+    }
+
+    override fun onChildDraw(
+        c: Canvas,
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        dX: Float,
+        dY: Float,
+        actionState: Int,
+        isCurrentlyActive: Boolean
+    ) {
+        c.drawRect(dX, 20f, 0f, 0f, paint)
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
 
     }
 
