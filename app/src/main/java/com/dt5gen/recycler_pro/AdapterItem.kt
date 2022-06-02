@@ -2,8 +2,8 @@ package com.dt5gen.recycler_pro
 
 import androidx.annotation.DrawableRes
 
-sealed class AdapterItem
+sealed class AdapterItem (val key: String)
 
-class NumberItem (val textNumberItem:String ) : AdapterItem()
-class HeaderItem (val headerItem:String ) : AdapterItem()
-class ImageItem (@DrawableRes val img: Int) : AdapterItem()
+data class NumberItem (val id: String, val textNumberItem:String ) : AdapterItem(id)
+data class HeaderItem (val id: String, val headerItem:String ) : AdapterItem(id)
+data class ImageItem (val id: String, @DrawableRes val img: Int) : AdapterItem(id)

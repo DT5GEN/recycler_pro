@@ -6,15 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 class ListAdapter(
     private val numberItemClicked: ((item: String) -> Unit)? = null,
     private val imageLongClicked: ((item: ImageItem) -> Unit)? = null,
-    private val itemDragged: ((viewHolder: RecyclerView.ViewHolder) -> Unit)? = null
+    private val itemDragged: ((viewHolder: RecyclerView.ViewHolder) -> Unit)? = null,
+    private val numberRemoved: ((position: Int) -> Unit)? = null
 ) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    ListAdapter<AdapterItem, RecyclerView.ViewHolder>(object :
+        DiffUtil.ItemCallback<AdapterItem>() {
+        override fun areItemsTheSame(oldItem: AdapterItem, newItem: AdapterItem): Boolean =
+            oldItem.key == newItem.key
+
+        override fun areContentsTheSame(oldItem: AdapterItem, newItem: AdapterItem): Boolean =
+            oldItem == newItem
+
+    }) {
 
 
     companion object {
@@ -25,16 +36,8 @@ class ListAdapter(
 
     }
 
-    private val data = mutableListOf<AdapterItem>()
 
-    fun setData(list: Collection<AdapterItem>) {
-        data.apply {
-            clear()
-            addAll(list)
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int = when (data[position]) {
+    override fun getItemViewType(position: Int): Int = when (currentList[position]) {
         is NumberItem -> TYPE_NUMBER
         is ImageItem -> TYPE_IMAGE
         is HeaderItem -> TYPE_HEADER
@@ -63,37 +66,36 @@ class ListAdapter(
 
         when (holder) {
             is NumberViewHolder -> {
-                val item = data[position] as NumberItem
+                val item = currentList[position] as NumberItem
                 with(holder) {
 
                     txt.text = item.textNumberItem
 
                     up.visibleIf { position != 0 }
-                    down.visibleIf { position != data.size - 1 }
+                    down.visibleIf { position != currentList.size - 1 }
 
                 }
             }
             is ImageViewHolder -> {
-                val item = data[position] as ImageItem
+                val item = currentList[position] as ImageItem
                 holder.imageItem.setImageResource(item.img)
             }
             is HeaderViewHolder -> {
-                val item = data[position] as HeaderItem
+                val item = currentList[position] as HeaderItem
                 holder.header.text = item.headerItem
             }
         }
 
     }
 
-    override fun getItemCount(): Int = data.size
 
     fun itemRemoved(position: Int) {
-        data.removeAt(position)
+        currentList.removeAt(position)
     }
 
     fun itemsMoved(from: Int, to: Int) {
-        Collections.swap(data, from, to)
-         }
+        Collections.swap(currentList, from, to)
+    }
 
     inner class NumberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -107,15 +109,13 @@ class ListAdapter(
         init {
             itemView.setOnClickListener {
 
-                (data[adapterPosition] as? NumberItem)?.let {
+                (currentList[adapterPosition] as? NumberItem)?.let {
                     numberItemClicked?.invoke(it.textNumberItem)
                 }
             }
 
             itemView.findViewById<ImageView>(R.id.delete).setOnClickListener {
-                data.removeAt(adapterPosition)
-                //  notifyDataSetChanged() // удаление без красоты (анимации )
-                notifyItemRemoved(adapterPosition)
+numberRemoved?.invoke(adapterPosition)
             }
 
 
@@ -131,17 +131,17 @@ class ListAdapter(
 
 
             itemView.findViewById<ImageView>(R.id.addItem).setOnClickListener {
-                data.add(adapterPosition + 1, NumberItem(UUID.randomUUID().toString()))
+                currentList.add(adapterPosition + 1, NumberItem("id", UUID.randomUUID().toString()))
                 notifyItemInserted(adapterPosition + 1)
             }
 
             itemView.findViewById<ImageView>(R.id.update).setOnClickListener {
-                data[adapterPosition] = NumberItem(UUID.randomUUID().toString())
+                currentList[adapterPosition] = NumberItem("id", UUID.randomUUID().toString())
                 notifyItemChanged(adapterPosition)
             }
 
             up.setOnClickListener {
-                Collections.swap(data, adapterPosition, adapterPosition - 1)
+                Collections.swap(currentList, adapterPosition, adapterPosition - 1)
 
                 up.visibleIf { adapterPosition - 1 != 0 }
                 notifyItemMoved(adapterPosition, adapterPosition - 1)
@@ -150,8 +150,8 @@ class ListAdapter(
             }
 
             down.setOnClickListener {
-                Collections.swap(data, adapterPosition, adapterPosition + 1)
-                down.visibleIf { adapterPosition + 1 != data.size - 1 }
+                Collections.swap(currentList, adapterPosition, adapterPosition + 1)
+                down.visibleIf { adapterPosition + 1 != currentList.size - 1 }
 
                 notifyItemMoved(adapterPosition, adapterPosition + 1)
                 notifyItemChanged(adapterPosition)
@@ -173,7 +173,7 @@ class ListAdapter(
         init {
             imageItem.setOnLongClickListener {
 
-                (data[adapterPosition] as? ImageItem)?.let {
+                (currentList[adapterPosition] as? ImageItem)?.let {
                     imageLongClicked?.invoke(it)
                 }
                 true

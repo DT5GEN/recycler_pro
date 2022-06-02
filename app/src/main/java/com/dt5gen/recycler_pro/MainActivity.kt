@@ -37,6 +37,28 @@ class MainActivity : AppCompatActivity() {
 
         ))
 
+        val data = mutableListOf(
+            HeaderItem("id1", "Some"),
+            NumberItem("id2", "1"),
+            HeaderItem("id3", "Some"),
+            NumberItem("id4", "2"),
+            HeaderItem("id5", "Some Again"),
+            NumberItem("id6", "3"),
+            NumberItem("id7", "4"),
+            ImageItem("id8", R.drawable.smile),
+            HeaderItem("id9", "Some Again"),
+            NumberItem("id10", "5"),
+            ImageItem("id11", R.drawable.smile),
+            NumberItem("id12", "6"),
+            ImageItem("id13", R.drawable.smile),
+            NumberItem("id14", "7"),
+            HeaderItem("id15", "Some Again"),
+            ImageItem("id16", R.drawable.smile),
+            NumberItem("id17", "8"),
+            ImageItem("id18", R.drawable.smile),
+            NumberItem("id19", "9"),
+            ImageItem("id21", R.drawable.smile)
+        )
 
         adapter = ListAdapter({
             Snackbar.make(list, it, Snackbar.LENGTH_SHORT).show()
@@ -46,33 +68,16 @@ class MainActivity : AppCompatActivity() {
             },
             {
                 helper.startDrag(it)
+            },
+            {
+
+                val copy = ArrayList(data)
+                copy.removeAt(it)
+                adapter.submitList(copy)
             }
 
         ).apply {
-            setData(
-                listOf(
-                    HeaderItem("Some"),
-                    NumberItem("1"),
-                    HeaderItem("Some"),
-                    NumberItem("2"),
-                    HeaderItem("Some Again"),
-                    NumberItem("3"),
-                    NumberItem("4"),
-                    ImageItem(R.drawable.smile),
-                    HeaderItem("Some Again"),
-                    NumberItem("5"),
-                    ImageItem(R.drawable.smile),
-                    NumberItem("6"),
-                    ImageItem(R.drawable.smile),
-                    NumberItem("7"),
-                    HeaderItem("Some Again"),
-                    ImageItem(R.drawable.smile),
-                    NumberItem("8"),
-                    ImageItem(R.drawable.smile),
-                    NumberItem("9"),
-                    ImageItem(R.drawable.smile)
-                )
-            )
+            submitList(data)
             notifyDataSetChanged()
         }
 
