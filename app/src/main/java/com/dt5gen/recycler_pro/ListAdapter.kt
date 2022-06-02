@@ -62,7 +62,14 @@ class ListAdapter(
         when (holder) {
             is NumberViewHolder -> {
                 val item = data[position] as NumberItem
-                holder.txt.text = item.textNumberItem
+                with(holder) {
+
+                    txt.text = item.textNumberItem
+
+                    up.visibleIf { position != 0 }
+                    down.visibleIf { position != data.size - 1 }
+
+                }
             }
             is ImageViewHolder -> {
                 val item = data[position] as ImageItem
@@ -78,9 +85,14 @@ class ListAdapter(
 
     override fun getItemCount(): Int = data.size
 
-
     inner class NumberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         var txt: TextView = itemView.findViewById(R.id.text)
+
+
+        val up: ImageView = itemView.findViewById(R.id.up)
+
+        val down: ImageView = itemView.findViewById(R.id.down)
 
         init {
             itemView.setOnClickListener {
@@ -92,28 +104,35 @@ class ListAdapter(
 
             itemView.findViewById<ImageView>(R.id.delete).setOnClickListener {
                 data.removeAt(adapterPosition)
-            //  notifyDataSetChanged() // удаление без красоты (анимации )
-              notifyItemRemoved(adapterPosition)
+                //  notifyDataSetChanged() // удаление без красоты (анимации )
+                notifyItemRemoved(adapterPosition)
             }
 
             itemView.findViewById<ImageView>(R.id.addItem).setOnClickListener {
-                data.add(adapterPosition+1, NumberItem(UUID.randomUUID().toString()))
-                         notifyItemInserted(adapterPosition+1)
+                data.add(adapterPosition + 1, NumberItem(UUID.randomUUID().toString()))
+                notifyItemInserted(adapterPosition + 1)
             }
 
             itemView.findViewById<ImageView>(R.id.update).setOnClickListener {
-                data [adapterPosition] = NumberItem(UUID.randomUUID().toString())
-                       notifyItemChanged(adapterPosition)
+                data[adapterPosition] = NumberItem(UUID.randomUUID().toString())
+                notifyItemChanged(adapterPosition)
             }
 
-            itemView.findViewById<ImageView>(R.id.up).setOnClickListener {
-                Collections.swap(data, adapterPosition, adapterPosition -1 )
-                       notifyItemMoved(adapterPosition, adapterPosition -1 )
+            up.setOnClickListener {
+                Collections.swap(data, adapterPosition, adapterPosition - 1)
+
+                up.visibleIf { adapterPosition - 1 != 0 }
+                notifyItemMoved(adapterPosition, adapterPosition - 1)
+                notifyItemChanged(adapterPosition)
+
             }
 
-            itemView.findViewById<ImageView>(R.id.down).setOnClickListener {
-                Collections.swap(data, adapterPosition, adapterPosition +1 )
-                       notifyItemMoved(adapterPosition, adapterPosition +1 )
+            down.setOnClickListener {
+                Collections.swap(data, adapterPosition, adapterPosition + 1)
+                down.visibleIf { adapterPosition + 1 != data.size - 1 }
+
+                notifyItemMoved(adapterPosition, adapterPosition + 1)
+                notifyItemChanged(adapterPosition)
             }
         }
     }
