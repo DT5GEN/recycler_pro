@@ -85,6 +85,14 @@ class ListAdapter(
 
     override fun getItemCount(): Int = data.size
 
+    fun itemRemoved(position: Int) {
+        data.removeAt(position)
+    }
+
+    fun itemsMoved(from: Int, to: Int) {
+        Collections.swap(data, from, to)
+         }
+
     inner class NumberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var txt: TextView = itemView.findViewById(R.id.text)
